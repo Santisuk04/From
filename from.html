@@ -1,0 +1,1187 @@
+<html><head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Registration</title>
+    <link rel="stylesheet" href="registration.css">
+    
+    
+      <script type="text/javascript" src="../script/qTip2/jquery-1.5.2.js"></script>																					<!-- tablesorter -->	
+      <link rel="stylesheet" type="text/css" href="../script/qTip2/jquery.qtip.css">																						<!-- Tooltip -->
+      <script type="text/javascript" src="../script/qTip2/jquery.qtip.js"></script>																		<!-- Tooltip -->
+      <script>
+         
+          var isUserDupStatus = 0;
+        
+          var typeUsername = 0;
+          (function($) {
+          $.fn.donetyping = function(callback) {
+            var _this = $(this);
+            var x_timer;
+            _this.val(_this.val().replace(/ /g, ''));
+            _this.live("input",function() {
+                $('#result').html('');
+              clearTimeout(x_timer);
+              x_timer = setTimeout(clear_timer, 750);
+            });
+    
+            function clear_timer() {
+              clearTimeout(x_timer);
+              callback.call(_this);
+            }
+          }
+        })(jQuery);
+        $(document).ready(function() {
+            $('.tooltip').qtip({
+                position: {
+                    my: 'bottom left',  
+                    at: 'top center'
+   
+                },
+                style: {
+                        classes: 'qtip-green qtip-shadow'
+                }				
+            });
+            $('#user').donetyping(function(callback){
+                $('#result').html('');
+                $('#loading').hide();
+                if($("#user").val() && checkValidateUsername()){
+                    $('#loading').show();
+                    checkDuplicateUsername();
+                }
+            });
+        });
+        function checkValidateUsername(){
+            var username = $("#user").val();
+            typeUsername = 0;
+            $("#typeUsername").val("0");
+            isUserDupStatus = 0;
+            if(username.length < 5 || username.length > 15 || !verifyChar(username) || verifyCharOnly(username)){
+                $('#result').html('<span style="color:red">ใช้ตัว a-z A-Z 0-9 และมีจำนวน 5 - 15 ตัวอักษร</span>');
+            }
+            else if(username.length == 13 && verifyNumber(username)){
+                if(checkCitizenid(username)){
+                    typeUsername = 1;
+                    $("#typeUsername").val("1");
+                    
+                    return true;
+                }
+                else{
+                    $('#result').html('<span style="color:red">รหัสบัตรประชาชนไม่ถูกต้อง</span>');
+                }
+            }
+            else{
+                typeUsername = 2;
+                $("#typeUsername").val("2");
+                
+                return true;
+            }
+            return false;
+        }
+        function checkDuplicateUsername(){
+            var username = $("#user").val();
+            if(username != ""){
+                isUserDupStatus = 0;
+                $.ajax({
+                    url:"ajax/checkDuplicateUsernameAjax.jsp",
+                    data:{"username":username},
+                    cache:false,
+                    async:false,
+                    statusCode:{
+                        204:function(){
+                            $('#loading').hide();
+                            isUserDupStatus = 1;
+                            if(typeUsername == 1){
+                                $('#result').html('<span style="color:green">สามารถใช้เลขบัตรประชาชนนี้ได้</span>');
+                            }
+                            else if(typeUsername == 2){
+                                $('#result').html('<span style="color:green">สามารถใช้เลขหนังสือเดินทางนี้ได้</span>');
+                            }
+                        },
+                        400:function(){
+                            $('#loading').hide();
+                            isUserDupStatus = 3;
+                            $('#result').html('<span style="color:red">กรุณาลองใหม่อีกครั้ง</span>');
+                        },
+                        500:function(){
+                            $('#loading').hide();
+                            isUserDupStatus = 2;
+                            if(typeUsername == 1){
+                                $('#result').html('<span style="color:red">ไม่สามารถใช้เลขบัตรประชาชนนี้ได้เนื่องจากซ้ำกับในระบบ</span>');
+                            }
+                            else if(typeUsername == 2){
+                                $('#result').html('<span style="color:red">ไม่สามารถใช้เลขหนังสือเดินทางได้เนื่องจากซ้ำกับในระบบ</span>');
+                            }
+                        }			
+                    }
+                });
+            }
+        }
+     </script>
+    
+    </head>
+    <body>
+    <br>
+    
+    <br>
+    
+    
+            </td>
+        </tr>
+        <tr class="B">
+            <td width="100%"><b>ใบสมัครเข้าศึกษาต่อ ระดับประกาศนียบัตรวิชาชีพ 1
+                ปีการศึกษา 2566</b></td><br>
+                <td width="100%"><b>วิทยาลัยพาณิชยการอินทราชัย</b></td><br>
+        </tr>
+        <tr>
+            <td width="100">ประวัติผู้สมัคร</td>
+                <div align="center">
+                    <table width="100%" border="0" cellspacing="0" cellpadding="2" style="border-collapse: collapse" bordercolor="#111111" id="AutoNumber10">
+                    
+                    <tbody><tr>
+                        <td align="left" colspan="3">
+                         
+                        <select name="title1" class="sanreg tooltip" style="display: inline-block;width:90px;" onchange="changeTitle(this)" oldtitle="โปรดตรวจสอบคำนำหน้าชื่อให้ถูกต้อง มิฉะนั้นจะไม่สามารถขอใบประกาศนียบัตรใหม่ได้" title="" data-hasqtip="true">
+                            <option value="1">นาย / Mr.  
+                            </option>
+                            
+    <option value="2">นางสาว / Ms.</option>
+    <option value="3">นาง / Mrs.</option>
+    <option value="4">เด็กหญิง / Miss</option>
+    <option value="5">เด็กชาย / Master</option>
+                        </select>
+                            <label style="display: inline-block;width:35px;" for="">ชื่อ <font color="red">*</font></label><input type="text" name="firstname" size="10" maxlength="100" value="" class="tooltip" oldtitle="โปรดตรวจสอบชื่อให้ถูกต้อง มิฉะนั้นจะไม่สามารถขอใบประกาศนียบัตรใหม่ได้" title="" data-hasqtip="true">
+                            <label style="display: inline-block;width:70px;" for="">นามสกุล  <font color="red">*</font></label> <input type="text" name="surname" size="10" maxlength="100" value=""  class="tooltip" oldtitle="โปรดตรวจสอบนามสกุลให้ถูกต้อง มิฉะนั้นจะไม่สามารถขอใบประกาศนียบัตรใหม่ได้" title="" data-hasqtip="true">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="200">เลขบัตรประจำตัวประชาชน</td>
+                        <td colspan="2" width="10" align="left"><input name="ID_number" size="10" maxlength="13" value=""></td>
+                    </tr>
+                    <tr>
+                        <td width="55">หมู่เลือด</td>
+                        <td colspan="2" width="10" align="left"><input name="prop200" size="1" maxlength="2" value=""></td>
+                    </tr>
+                    <tr>
+                        <tr>
+                            <td width="55">เชื้อชาติ</td>
+                            <td colspan="2" width="150" align="left"><input name="prop201" size="10" maxlength="100" value=""></td>
+                        
+                        </tr>
+                        <tr>
+                            <td width="55">สัญชาติ</td>
+                            <td colspan="2" width="150" align="left"><input name="Cda" size="10" maxlength="100" value=""></td>
+                        </tr>
+                        <tr>
+                        
+                            <tr>
+                    
+
+                    <tr class="san">
+                        <td colspan="3">วันเกิด / Date of birth<font color="red">* </font>
+                            <select name="prop3_3" class="sanreg">
+                            <option value="">วัน / Day						</option>
+    <option value="01">01</option>
+    <option value="02">02</option>
+    <option value="03">03</option>
+    <option value="04">04</option>
+     <option value="05">05</option>
+     <option value="06">06</option>
+    <option value="07">07</option>
+    <option value="08">08</option>
+    <option value="09">09</option>
+    <option value="10">10</option>
+    <option value="11">11</option>
+    <option value="12">12</option>
+    <option value="13">13</option>
+     <option value="14">14</option>
+     <option value="15">15</option>
+    <option value="16">16</option>
+    <option value="17">17</option>
+    <option value="18">18</option>
+    <option value="19">19</option>
+    <option value="20">20</option>
+    <option value="21">21</option>
+    <option value="22">22</option>
+    <option value="23">23</option>
+    <option value="24">24</option>
+    <option value="25">25</option>
+    <option value="26">26</option>
+    <option value="27">27</option>
+    <option value="28">28</option>
+    <option value="29">29</option>
+    <option value="30">30</option>
+    <option value="31">31</option>
+                            </select>
+                            <select name="prop3_2" class="sanreg">
+                            <option value="">เดือน/ Month						</option>
+    <option value="01">มกราคม / January</option>
+    <option value="02">กุมภาพันธ์ / February</option>
+    <option value="03">มีนาคม / March</option>
+    <option value="04">เมษายน / April</option>
+    <option value="05">พฤษภาคม / May</option>
+    <option value="06">มิถุนายน / June</option>
+    <option value="07">กรกฎาคม / July</option>
+    <option value="08">สิงหาคม / August</option>
+    <option value="09">กันยายน / September</option>
+     <option value="10">ตุลาคม / October</option>
+    <option value="11">พฤศจิกายน / November</option>
+    <option value="12">ธันวาคม / December</option>
+                            </select>
+                            Year  <input maxlength="4" size="4" name="prop3_1" value="">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="100">เบอร์โทรศัพท์</td>
+                        <td colspan="2" width="380" align="left"><input name="Number" size="7" maxlength="10" value=""></td>
+                    </tr>
+                    <tr>
+                        <td width="200">สถานะทางการศึกษา <br>
+                        <td colspan="2" width="380" align="left">
+                    <input type="checkbox" name="prop205" value="01">กำลังศึกษาอยู่ในระดับชั้นมัธยมศึกษาปีที่3
+                    <input type="checkbox" name="prop206" value="01">จบการศึกษามัธยมศึกษาปีที่3
+                    <tr>
+                        <td colspan="3" width="200">&nbsp;</td>
+                    <tr>
+                        <td width="200">ที่อยู่ปัจจุบัน / Address</td>
+                        <td colspan="2" width="380" align="left"> บ้านเลขที่ / House no. <font color="red">* </font><input maxlength="15" size="3" name="prop4" value=""> หมู่ / Moo	<input size="3" maxlength="5" name="prop5" value=""></td>
+                    </tr>
+                    <tr>
+                        <td width="200">หมู่บ้าน/อาคาร/Village / Building</td>
+                        <td colspan="2" width="380" align="left"><input name="prop6" size="30" maxlength="25" value=""></td>
+                    </tr>
+                    <tr>
+                        <td width="200">ซอย / Soi</td>
+                        <td colspan="2" width="380" align="left"><input name="prop7" size="30" maxlength="25" value=""></td>
+                    </tr>
+                    <tr>
+                        <td width="200">ถนน / Street</td>
+                        <td colspan="2" width="380" align="left"><input name="prop8" size="30" maxlength="20" value=""></td>
+                    </tr>
+                    <tr>
+                        <td width="200">แขวง / ตำบล / District	<font color="red">* </font></td>
+                        <td colspan="2" width="380" align="left"><input name="prop9" size="30" maxlength="255" value=""></td>
+                    </tr>
+                    <tr>
+                        <td width="220">เขต / อำเภอ / Amphur  <font color="red">* </font></td>
+                        <td width="360" align="left"><input name="prop10" size="30" maxlength="255" value=""></td>
+                    </tr>
+                    <tr>
+                        <td width="220">รหัสไปรษณีย์ / Zip code  <font color="red">* </font></td>
+                        <td width="360" align="left"><input type="text" name="prop12" size="5" maxlength="5" value=""></td>
+                    </tr>
+
+                    <tr>
+                        <td width="220">จังหวัด / Province  <font color="red">* </font></td>
+                        <td width="360" align="left">
+                        <select name="prop11" class="sanreg">
+                        <option value="">Please Select					</option>
+                        <option value="01">กรุงเทพมหานคร / Bangkok</option>
+                        <option value="02">กระบี่  / Krabi</option>
+                        <option value="03">กาญจนบุรี / Kanchanaburi</option>
+                        <option value="04">กาฬสินธุ์ / Kalasin</option>
+                        <option value="05">กำแพงเพชร /  Kamphaeng Phet </option>
+                        <option value="06">ขอนแก่น  / Khon Kaen</option>
+                        <option value="07">จันทบุรี  / Chanthaburi</option>
+                        <option value="08">ฉะเชิงเทรา / Chachoengsao</option>
+                        <option value="09">ชลบุรี / Chon Buri</option>
+                        <option value="10">ชัยนาท  / Chai Nat</option>
+                        <option value="11">ชัยภูมิ / Chaiyaphum</option>
+                        <option value="12">ชุมพร / Chumphon</option>
+                        <option value="13">เชียงราย / Chiang Rai</option>
+                        <option value="14">เชียงใหม่ / Chiang Mai</option>
+                        <option value="15">ตรัง  / Trang</option>
+                        <option value="16">ตราด / Trat</option>
+                        <option value="17">ตาก  / Tak</option>
+                        <option value="18">นครนายก / Nakhon Nayok</option>
+                        <option value="19">นครปฐม / Nakhon Pathom</option>
+                        <option value="20">นครพนม  / Nakhon Phanom</option>
+                        <option value="21">นครราชสีมา / Nakhon Ratchasima</option>
+                        <option value="22">นครศรรีธรรมราช / Nakhon Si Thammarat</option>
+                        <option value="23">นครสวรรค์ / Nakhon  Sawan</option>
+                        <option value="24">นนทบุรี / Nonthaburi</option>
+                        <option value="25">นราธิวาส / Narathiwat</option>
+                        <option value="26">น่าน / Nan</option>
+                        <option value="77">บึงกาฬ / Bueng Kan</option>
+                        <option value="27">บุรีรัมย์ / Buri Ram</option>
+                        <option value="28">ปทุมธานี / Pathum Thani</option>
+                        <option value="29">ประจวบคีรีขันธ์ / Prachuap Khiri Khan</option>
+                        <option value="30">ปราจีนบุรี  / Prachin Buri</option>
+                        <option value="31">ปัตตานี /  Pattani</option>
+                        <option value="32">นครศรีอยุธยา / Phra Nakhon Si Ayutthaya</option>
+                        <option value="33">พะเยา / Phayao</option>
+                        <option value="34">พังงา / Phangnga</option>
+                        <option value="35">พัทลุง / Phatthalung</option>
+                        <option value="36">พิจิตร/ Phichit</option>
+                        <option value="37">พิษณุโลก / Phisanulok" );%"&gt;</option>
+                        <option value="38">เพชรบุรี / Phetchaburi </option>
+                        <option value="39">เพชรบูรณ์ / Phetchabun</option>
+                        <option value="40">แพร่  / ่Phrae</option>
+                        <option value="41">ภูเก็ต / Phuket</option>
+                        <option value="42">มหาสารคาม  /  Maha Sarakham</option>
+                        <option value="43">มกุดาหาร / Mukdahan</option>
+                        <option value="44">แม่ฮ่องสอน / Mae Hong Son</option>
+                        <option value="45">ยโสธร / Yasothon</option>
+                        <option value="46">ยะลา / Yala</option>
+                        <option value="47">ร้อยเอ็ด  / Roi Et</option>
+                        <option value="48">ระนอง / Ranong</option>
+                        <option value="49">ระยอง /  Rayong</option>
+                        <option value="50">ราชบุรี / Ratchaburi</option>
+                        <option value="51">ลพบุรี / Lop Buri</option>
+                        <option value="52">ลำปาง / Lampang</option>
+                        <option value="53">ลำพูน / Lamphun</option>
+                        <option value="54">เลย / Loei</option>
+                        <option value="55">ศรีสะเกษ / Si  Sa Ket</option>
+                        <option value="56">สกลนคร / Sakon Nakhon</option>
+                        <option value="57">สงขลา / Songkhla</option>
+                        <option value="58">สตูล / Satun</option>
+                        <option value="59">สมุทรปราการ / Samut Prakan</option>
+                        <option value="60">สมุทรสงคราม / Samut Songkram</option>
+                        <option value="61">สมุทรสาคร / Samut Sakhon</option>
+                        <option value="62">สระแก้ว / Sakaew</option>
+                        <option value="63">สระบุรี / Saraburi</option>
+                        <option value="64">สิงห์บุรี / Sing Buri</option>
+                        <option value="65">สุโขทัย  / Sukhothai</option>
+                        <option value="66">สุพรรณบุรี / Suphan Buri</option>
+                        <option value="67">สุราษฎร์ธานี / Surat Thani</option>
+                        <option value="68">สุรินทร์ / Surin</option>
+                        <option value="69">หนองคาย  /  Nong Khai </option>
+                        <option value="70">หนองบัวลำภู / Nong Bure Rum Phu</option>
+                        <option value="71">อ่างทอง / Ang Thong</option>
+                        <option value="72">อำนาจเจริญ / Amnatjalearn</option>
+                        <option value="73">อุดรธานี / Udon Thani</option>
+                        <option value="74">อุตรดิตถ์ / Uttaradit</option>
+                        <option value="75">อุทัยธานี / Uthai Thani</option>
+                        <option value="76">อุบลราขธานี / Ubon Ratchathani</option>
+                        </select>
+                        </td>
+                    </tr>
+
+                    </tbody></table>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td width="100%">
+                <div align="center">
+                    <table width="100%" border="0" cellspacing="0" cellpadding="2" style="border-collapse: collapse" bordercolor="#111111" id="AutoNumber10">
+                    
+                    <tbody><tr>
+                        <td align="left" colspan="3">
+                         
+                        <select name="title1" class="sanreg tooltip" style="display: inline-block;width:90px;" onchange="changeTitle(this)" oldtitle="โปรดตรวจสอบคำนำหน้าชื่อให้ถูกต้อง มิฉะนั้นจะไม่สามารถขอใบประกาศนียบัตรใหม่ได้" title="" data-hasqtip="true">
+                            <option value="1">นาย / Mr.  
+                            </option>
+                            
+    <option value="1">นางสาว / Ms.</option>
+    <option value="2">นาง / Mrs.</option>
+                        </select>
+                            <label style="display: inline-block;width:35px;" for="">ชื่อ <font color="red">*</font></label><input type="text" name="firstname" size="10" maxlength="100" value="" class="tooltip" oldtitle="โปรดตรวจสอบชื่อให้ถูกต้อง มิฉะนั้นจะไม่สามารถขอใบประกาศนียบัตรใหม่ได้" title="" data-hasqtip="true">
+                            <label style="display: inline-block;width:70px;" for="">นามสกุล  <font color="red">*</font></label> <input type="text" name="surname" size="10" maxlength="100" value=""  class="tooltip" oldtitle="โปรดตรวจสอบนามสกุลให้ถูกต้อง มิฉะนั้นจะไม่สามารถขอใบประกาศนียบัตรใหม่ได้" title="" data-hasqtip="true">
+                        </td>
+    </tbody></table>
+    <center><br><input type="checkbox" name="prop208" onclick="chkbox()"><b>ข้าพเจ้าขอรับรองว่าข้อความดังกล่าวเป็นจริง และยินดีปฏิบัติตามเงื่อนไขที่กำหนดของแต่ละหลักสูตรทุกประการ <br>รวมทั้งไม่ยินยอมให้บุคคลอื่น เข้ามาใช้บริการแทน หากสำนักฯ ตรวจสอบและพบว่าท่านได้แจ้งรหัสผู้ใช้งานและรหัสผ่านของท่านแก่บุคคลอื่น <br> เพื่อจุดมุ่งหมายให้บุคคลอื่นเข้ามาใช้บริการแทน สำนักฯ ขอสงวนสิทธิในการระงับการให้บริการแก่ท่าน <br>(I hereby declare that the above statements are true. I am willing to comply  with the terms <br>and conditions of each course, and I will not allow others to use the service instead.   <br>If the Bureau checks and finds out that you have informed your user ID and password to other persons with <br>the purposes for the others to use the service instead, then the Bureau reserves the right to suspend the service to you.)</b></center>
+    <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse" width="100%" id="AutoNumber11">
+        <tbody><tr><td>&nbsp;</td></tr>
+        <tr>
+            <td align="center" valign="top">
+                    <input name="submit" type="submit" class="A" value="   Register   " disabled="">&nbsp;&nbsp;&nbsp;
+                    
+                    <input type="hidden" name="groupID" class="A" value="1">
+                    <input type="hidden" name="error" class="A" value="null">
+                    <input type="hidden" name="totalrecord" class="A" value="">
+                    <input type="hidden" name="userid" class="A" value="">
+                    <input type="hidden" name="typeUsername" id="typeUsername" class="A" value="0">
+                    <input type="hidden" name="prop200" id="prop200" class="A" value="">
+                    <input type="hidden" name="prop207" id="prop207" class="A" value="">
+            </td>
+        </tr>
+        <tr><td>&nbsp;</td></tr>
+    </tbody></table>
+    </form>
+    </div>
+    <script language="JavaScript">
+    
+            document.loginForm.submit.disabled=true;
+    
+    function chkbox()
+    {
+        if (document.loginForm.prop208.checked) {
+            document.loginForm.submit.disabled=false;
+        }else{
+            document.loginForm.submit.disabled=true;
+        }
+    
+        alert('โปรดตรวจสอบ คำนำหน้าชื่อ  ชื่อ  นามสกุล ให้ถูกต้อง \n มิฉะนั้นจะไม่สามารถขอใบประกาศนียบัตรใหม่ได้');
+    
+    }
+    
+    function dispHandle(obj) 
+    {
+
+        if( obj == 'divprop105' ) 
+        {
+        
+            if (document.loginForm.prop104.value==05) {
+                document.getElementById(obj).style.visibility = "visible";
+            }else{
+                document.getElementById(obj).style.visibility = "hidden";
+            }
+        }
+        if( obj == 'divprop204' ) 
+        {
+        
+            if (document.loginForm.prop203.value==14) {
+                document.getElementById(obj).style.visibility = "visible";
+            }else{
+                document.getElementById(obj).style.visibility = "hidden";
+            }
+        }
+        if( obj == 'divprop206' ) 
+        {
+            boxes = document.loginForm.prop205.length - 1;
+       
+            if (document.loginForm.prop205[boxes].checked) {
+                document.getElementById(obj).style.visibility = "visible";
+            }else{
+                document.getElementById(obj).style.visibility = "hidden";
+            }
+        }
+    }
+    
+    function Trim(str){
+        if (typeof str == "string"){
+        var regexp = /(^\s*)|(\s*$)/g;
+        return str.replace(regexp,'');
+        }
+        else
+            return str;
+    }	
+    function getLastDate(m, y){
+        if (m == 2){
+            if ((y-543)%4 == 0){
+                lastday = 29;
+            }else{
+                lastday = 28;
+            }
+        }else if ((m==4)||(m==6)||(m==9)||(m==11)){
+            lastday = 30;
+        }else{
+            lastday = 31;
+        }
+        return lastday;
+    }	
+    
+    function verifyName(word)
+    {
+        for (var i=0; i<word.length; i++)
+        {
+            if (
+                ((word.charCodeAt(i) >= 48) && (word.charCodeAt(i) <= 146)) ||
+                ((word.charCodeAt(i) >= 237) && (word.charCodeAt(i) <= 255)) 
+                )
+            {
+                return false;
+            }
+        }
+                return true;
+    }
+    
+    
+    function verifyChar(word)
+    {
+        for (var i=0; i<word.length; i++)
+        {
+            if (
+            ((word.charCodeAt(i) >= 48) && (word.charCodeAt(i) <= 57)) ||
+            ((word.charCodeAt(i) >= 65) && (word.charCodeAt(i) <= 90)) ||
+            ((word.charCodeAt(i) >= 97) && (word.charCodeAt(i) <= 122))
+            )
+            {
+            }
+            else
+            {
+                return false;
+            }
+        }
+                return true;
+    }
+    function verifyCharOnly(word)
+    {
+        for (var i=0; i<word.length; i++)
+        {
+            if (
+            ((word.charCodeAt(i) >= 65) && (word.charCodeAt(i) <= 90)) ||
+            ((word.charCodeAt(i) >= 97) && (word.charCodeAt(i) <= 122))
+            )
+            {
+            }
+            else
+            {
+                return false;
+            }
+        }
+                return true;
+    }
+    function verifySpace(word)
+    {
+        for (var i=0; i<word.length; i++)
+        {
+            if (word.charCodeAt(i) != 32)
+            {
+            }
+            else
+            {return false;
+            }
+        }
+                return true;
+    }
+    
+    function verifyNumber(word)
+    {
+        for (var i=0; i<word.length; i++)
+        {
+            if ((word.charCodeAt(i) >= 48) && (word.charCodeAt(i) <= 57))
+            {
+            }
+            else
+            {return false;
+            }
+        }
+                return true;
+    }
+    function checkCitizen(){
+                id = document.getElementById("prop200_id").value;
+                for(i=0, sum=0; i < 12; i++)
+                    sum += parseFloat(id.charAt(i))*(13-i);
+                if((11-sum%11)%10!=parseFloat(id.charAt(12))) {
+                
+                    document.loginForm.prop200.focus();
+                    return false;
+                }else{
+                    return true;
+                }
+    }
+    function checkCitizenid(id){
+        for(i=0, sum=0; i < 12; i++)
+            sum += parseFloat(id.charAt(i))*(13-i);
+        if((11-sum%11)%10!=parseFloat(id.charAt(12))) {
+            return false;
+        }else{
+            return true;
+        }
+    }
+    function emailCheck (emailStr)
+    {
+        var emailPat=/^(.+)@(.+)$/;
+        var specialChars="\\(\\)<>@,;:\\\\\\\"\\.\\[\\]";
+        var validChars="\[^\\s" + specialChars + "\]";
+        var quotedUser="(\"[^\"]*\")";
+        var ipDomainPat=/^\[(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})\]$/;
+        var atom=validChars + '+';
+        var word="(" + atom + "|" + quotedUser + ")";
+        var userPat=new RegExp("^" + word + "(\\." + word + ")*$");
+        var domainPat=new RegExp("^" + atom + "(\\." + atom +")*$");
+        var matchArray=emailStr.match(emailPat);
+        if (matchArray==null)
+        {
+            alert("กรุณากรอกอีเมล์แอดเดรสให้ถูกต้อง / Please fill-in correct format e-Mail address.");
+            return false;
+        }
+        var user=matchArray[1];
+        var domain=matchArray[2];
+    
+        if (user.match(userPat)==null)
+        {
+            alert("รหัสผู้ใช้อีเมล์แอดเดรสอาจไม่ถูกต้อง / Incorrect e-Mail address.");
+            return false;
+        }
+    
+        var IPArray=domain.match(ipDomainPat);
+        if (IPArray!=null)
+        {
+              for (var i=1;i<=4;i++)
+              {
+                if (IPArray[i]>255)
+                {
+                    alert("ไอพีแอดเดรสปลายทางของอีเมล์แอดเดรสไม่ถูกต้อง / Incorrect IP address destination.");
+                    return false;
+                }
+            }
+            return true;
+        }
+    
+        var domainArray=domain.match(domainPat);
+        if (domainArray==null)
+        {
+            alert("โดเมนเนมของอีเมล์แอดเดรสไม่ถูกต้อง / Incorrect domain name of e-Mail address.");
+            return false;
+        }
+    
+        var atomPat=new RegExp(atom,"g");
+        var domArr=domain.match(atomPat);
+        var len=domArr.length;
+        if (domArr[domArr.length-1].length<2 ||
+            domArr[domArr.length-1].length>3)
+            {
+                alert("อีเมล์แอดเดรสต้องลงท้ายด้วยโดเมน 3 ตัวอักษรหรือรหัสประเทศ 2 ตัวอักษร / e-Mail address must end with 2 letters of country code or 3 letters of domain name");
+                return false;
+            }
+    
+        if (len<2)
+        {
+            var errStr="อีเมล์แอดเดรสไม่มีโฮสเนม กรุณากรอกอีเมล์แอดเดรสให้ถูกต้อง / No host name for e-Mail address field.";
+            alert(errStr);
+            return false;
+        }
+    
+        return true;
+    }
+    
+    function CheckLikes() {
+    
+        boxes = document.loginForm.prop205.length;
+      
+        txt = "";
+        for (i = 0; i < boxes; i++) {
+            if (document.loginForm.prop205[i].checked) {
+                txt = txt + document.loginForm.prop205[i].value + ",";
+            }
+        }
+    
+        if (txt == "") {
+            Message = "ท่านทราบข่าวสารฝึกอบรมจากทางใด";
+            alert(Message);
+            return false;
+        }
+        else {
+                if (document.loginForm.prop205[boxes-1].checked) {
+                    if ( document.loginForm.prop206.value=="" ) {
+                        alert("ท่านทราบข่าวสารฝึกอบรมจากทางใด (โปรดระบุ)");
+                        document.loginForm.prop206.focus();
+                        return false;
+                    }
+                }else{
+                    document.loginForm.prop206.value = "";
+                }
+                document.loginForm.prop205[0].value = txt;
+                if (!document.loginForm.prop208.checked) {
+                    alert("ยังไม่ได้รับรองข้อมูล");
+                    document.loginForm.prop208.focus();
+                    return false;
+                }
+        }
+    
+    return true;
+    }
+   
+    function changeTitle(selectObject){
+        var value = selectObject.value;
+        if(value==1 || value == 5){
+            document.getElementById('chmale').click();
+            
+        }else if(value==2 || value == 3|| value == 4){
+            document.getElementById('chfemale').click();
+        }
+        
+    }
+    
+    function verifyData(objform)
+    {
+    
+         title1 = document.loginForm.title1.value;
+         user = document.loginForm.user.value;
+         pwd = document.loginForm.pwd.value;
+         confirm_pwd = document.loginForm.confirm_pwd.value;
+
+         firstname = document.loginForm.firstname.value;
+         surname = document.loginForm.surname.value;
+         firstnameeng = document.loginForm.firstnameEng.value;
+         surnameeng = document.loginForm.surnameEng.value;
+         gender = (objform.prop1[0].checked == true)?"1":"2";
+          birth_day = document.loginForm.prop3_3.value;
+         birth_month = document.loginForm.prop3_2.value;
+           birth_year = document.loginForm.prop3_1.value;
+         house_no = document.loginForm.prop4.value;
+         moo = document.loginForm.prop5.value;
+         village = document.loginForm.prop6.value;
+         soi = document.loginForm.prop7.value;
+         road = document.loginForm.prop8.value;
+         subdistrict = document.loginForm.prop9.value;
+          district = document.loginForm.prop10.value;
+         province = document.loginForm.prop11.value;
+         zipcode = document.loginForm.prop12.value;
+         phone = document.loginForm.prop13.value;
+         email = document.loginForm.email.value;
+        var prop18, prop19, count=0;
+    
+
+        var prop101 = document.loginForm.prop101.value;
+        var prop102 = document.loginForm.prop102.value;
+        var prop103 = document.loginForm.prop103.value;
+    
+        var prop200 = "";
+        if(typeUsername == 1){
+            prop200 = user;
+        }
+        
+        var prop207 = "";
+        if(typeUsername == 2){
+            prop207 = user;
+        }
+        $("#prop200").val(prop200);
+        $("#prop207").val(prop207);
+        var thisYear ='2566';
+     
+
+        if (title1 == "") {
+            alert("กรุณาใสคำนำหน้าชื่อ");
+            return false;
+        } else if (title1 == "1" || title1 == "5") {
+            if (!document.getElementById('chmale').checked) {
+                alert("กรุณาใสคำนำหน้าชื่อให้ถูกต้องกับเพศด้วยครับ");
+                return false;
+            }
+        } else if (title1 == "2" || title1 == "3" || title1 == "4") {
+            if (!document.getElementById('chfemale').checked) {
+                alert("กรุณาใสคำนำหน้าชื่อให้ถูกต้องกับเพศด้วยครับ");
+                return false;
+            }
+        }
+    
+        if (user == "") {
+            alert("กรุณาใส่ข้อมูลหมายเลขบัตรประชาชน/หมายเลขหนังสือเดินทาง\nPlease fill-in your  ID Card/Passport No.");
+            document.loginForm.user.focus();
+            return false;
+        } else {
+         
+            
+            if(!checkValidateUsername()){
+                if(typeUsername == 0){
+                    alert("ความยาวหมายเลขบัตรประชาชน/หมายเลขหนังสือเดินทาง\nใช้ตัว a-z A-Z 0-9 และมีจำนวน 5 - 15 ตัวอักษร");
+                    document.loginForm.user.focus();
+                    return false;
+                }
+            }
+            else{
+                checkDuplicateUsername();
+                if(isUserDupStatus == 0){
+                    alert("ความยาวหมายเลขบัตรประชาชน/หมายเลขหนังสือเดินทาง\nใช้ตัว a-z A-Z 0-9 และมีจำนวน 5 - 15 ตัวอักษร");
+                    document.loginForm.user.focus();
+                    return false;
+                }
+                else if(isUserDupStatus == 2){
+                    if(typeUsername == 1){
+                        alert("ไม่สามารถใช้เลขบัตรประชาชนนี้ได้เนื่องจากซ้ำกับในระบบ");
+                    }
+                    else if(typeUsername == 2){
+                        alert("ไม่สามารถใช้เลขหนังสือเดินทางได้เนื่องจากซ้ำกับในระบบ");
+                    }
+                    document.loginForm.user.focus();
+                    return false;
+                }
+                else if(isUserDupStatus == 3){
+                    alert("กรุณาลองใหม่อีกครั้ง");
+                    document.loginForm.user.focus();
+                    return false;
+                }
+            }
+            
+            if (pwd == "") {
+                alert("กรุณาใส่ข้อมูลรหัสผ่าน / Please fill-in your password.");
+                document.loginForm.pwd.focus();
+                return false;
+            } else {
+                test = verifyChar(pwd);
+                if (test == false) {
+                    alert("รหัสผ่านเป็นตัวอักษร a-z A-Z 0-9 เท่านั้น / Password must consisted of a-z A-Z 0-9.");
+                    document.loginForm.pwd.focus();
+                    return false;
+                }
+                if (pwd.length > 10 || pwd.length < 5) {
+                    alert("ความยาวของรหัสผู้ใช้ต้องอยู่ระหว่าง 5-10 ตัวอักษร / Length of password must be 5-10 characters.");
+                    document.loginForm.pwd.focus();
+                    return false;
+                }
+    
+                if (confirm_pwd == "") {
+                    alert("กรุณายืนยันรหัสผ่าน / Please retype your password.");
+                    document.loginForm.confirm_pwd.focus();
+                    return false;
+                } else {
+                    test = verifyChar(confirm_pwd);
+                    if (test == false) {
+                        alert("รหัสผ่านเป็นตัวอักษร a-z A-Z 0-9 เท่านั้น / Retype password must consisted of a-z A-Z 0-9.");
+                        document.loginForm.confirm_pwd.focus();
+                        return false;
+                    }
+                    if (confirm_pwd.length > 10 || confirm_pwd.length < 5) {
+                        alert("ความยาวของรหัสผู้ใช้ต้องอยู่ระหว่าง 5-10 ตัวอักษร / Length of password must be 5-10 characters.");
+                        document.loginForm.confirm_pwd.focus();
+                        return false;
+                    }
+    
+                    if (pwd != confirm_pwd) {
+                        alert("กรุณายืนยันรหัสให้ตรงกัน / Password and retype password must be the same.");
+                        document.loginForm.confirm_pwd.focus();
+                        return false;
+                    } else {
+    
+                        if ( false) {
+                            alert("กรุณาเลือกคำถาม (Hint) / Please select hint question.");
+                            document.loginForm.hint.focus();
+                            return false;
+                        } else {
+    
+                            if ( false) {
+                                alert("กรุณาใส่คำตอบ (Hint Answer) / Please fill-in hint answer.");
+                                document.loginForm.hint_ans.focus();
+                                return false;
+                            } else {
+                              /
+                                if (title1 == "") {
+                                    alert("กรุณากรอกคำนำหน้า / Please enter your title.");
+                                    document.loginForm.title1.focus();
+                                    return false;
+                                }
+    
+    
+                                if (firstname == "") {
+                                    alert("กรุณากรอกชื่อของคุณ / Please enter your name.");
+                                    document.loginForm.firstname.focus();
+                                    return false;
+                                } else {
+                                
+                                    if (Trim(firstname) == "") {
+                                        alert("ชื่อของคุณห้ามเป็นช่องว่าง กรุณากรอกข้อมูล. / Please enter your name.");
+                                        document.loginForm.firstname.focus();
+                                        return false;
+                                    } else {
+                                        test = verifyName(firstname);
+                                        if (test != true) {
+                                            alert("กรุณากรอกชื่อเป็นตัวอักษรภาษาไทยเท่านั้น");
+                                            document.loginForm.firstname.focus();
+                                            return false;
+                                        }
+                                       
+                                    
+                                        if (firstname.length > 255) {
+                                            alert("ความยาวของคำตอบต้องไม่เกิน 255 ตัวอักษร / Length of name is limited to 255 characters.");
+                                            document.loginForm.firstname.focus();
+                                            return false;
+                                        }
+                                        
+                                        if (surname == "") {
+                                            alert("กรุณากรอกนามสกุลของท่าน / Please enter your surname");
+                                            document.loginForm.surname.focus();
+                                            return false;
+                                        } else {
+                                            test = verifyName(surname);
+                                            if (test != true) {
+                                                alert("กรุณากรอกชื่อเป็นตัวอักษรภาษาไทยเท่านั้น");
+                                                document.loginForm.surname.focus();
+                                                return false;
+                                            }
+    
+                                            
+                                            if (Trim(surname) == "") {
+                                                alert("นามสกุลของคุณห้ามเป็นช่องว่าง กรุณากรอกข้อมูล.");
+                                                document.loginForm.surname.focus();
+                                                return false;
+                                            } else {
+                                   
+                                                if (surname.length > 255) {
+                                                    alert("ความยาวของคำตอบต้องไม่เกิน 255 ตัวอักษร / Length of surname is limited to 255 characters.");
+                                                    document.loginForm.surname.focus();
+                                                    return false;
+                                                }
+                                               
+                                                if (firstnameeng == "") {
+                                                    alert("กรุณากรอกชื่อภาษาอังกฤษของคุณ / Please enter your name.");
+                                                    document.loginForm.firstnameEng.focus();
+                                                    return false;
+                                                }
+                                                
+                                                if (firstnameeng.length > 255) {
+                                                    alert("ความยาวของชื่อภาษาอังกฤษต้องไม่เกิน 255 ตัวอักษร / Length of name is limited to 255 characters.");
+                                                    document.loginForm.firstnameEng.focus();
+                                                    return false;
+                                                }
+                                                if (Trim(firstnameeng) == "") {
+                                                        alert("ชื่อภาษาอังกฤษของคุณห้ามเป็นช่องว่าง กรุณากรอกข้อมูล.");
+                                                        document.loginForm.firstnameEng.focus();
+                                                        return false;
+                                                }
+                                                
+                                                var englishal = /^[A-Za-z0-9 ._,&()-]*$/;
+                                                if (englishal.test(firstnameeng) == false) {
+                                             
+                                                       alert("กรุณากรอกชื่อเป็นตัวอักษรภาษาอังกฤษเท่านั้น/Name can only contain english letters.");
+                                                        document.loginForm.firstnameEng.focus();
+                                                        return false;
+                                                }  
+                                                  
+                                                
+                                                if (surnameeng == "") {
+                                                    alert("กรุณากรอกนามสกุลภาษาอังกฤษของคุณ / Please enter your surname.");
+                                                    document.loginForm.surnameEng.focus();
+                                                    return false;
+                                                }
+                                                
+                                                if (surnameeng.length > 255) {
+                                                    alert("ความยาวของนามสกุลภาษาอังกฤษต้องไม่เกิน 255 ตัวอักษร / Length of surname is limited to 255 characters.");
+                                                    document.loginForm.surnameEng.focus();
+                                                    return false;
+                                                }
+                                                if (Trim(surnameeng) == "") {
+                                                        alert("นามสกุลภาษาอังกฤษของคุณห้ามเป็นช่องว่าง กรุณากรอกข้อมูล.");
+                                                        document.loginForm.surnameEng.focus();
+                                                        return false;
+                                                }
+                                                if (englishal.test(surnameeng) == false) {
+                                                       alert("กรุณากรอกนามสกุลเป็นตัวอักษรภาษาอังกฤษเท่านั้น/Surname can only contain english letters.");
+                                                        document.loginForm.surnameEng.focus();
+                                                        return false;
+                                                }  
+                                                
+                                                
+                                                
+    
+                                                if (gender == "") {
+                                                    alert("กรุณาระบุเพศ / Please specify your gender.");
+                                                    return false;
+                                                } else {
+    
+                                                    if ((gender == "1" && title1 == "2") ||
+                                                        (gender == "1" && title1 == "3") ||
+                                                        (gender == "2" && title1 == "1")) {
+                                                        alert(" กรุณาใส่คำนำหน้าให้ตรงกับเพศ / Title doesn't harmonize with gender. Please try again.");
+                                                        return false;
+                                                    }
+    
+                                                    if ((birth_day == "") || (birth_month == "") || (birth_year.length < 4) || (birth_year < 2400)) {
+                                                        alert("กรุณาระบุวัน เดือน ปี ที่ท่านเกิด / Please specify your birthdate");
+                                                        document.loginForm.prop3_3.focus();
+                                                        return false;
+                                                    } else {
+                                                        lastday = getLastDate(birth_month, birth_year)
+                                                        if (birth_day > lastday) {
+                                                            alert("เดือนนี้มี " + lastday + "วัน กรุณาใส่ข้อมูลตามความเป็นจริง / This year has " + lastday + " days Please type the correct Date of birth.");
+                                                            return false;
+                                                        }
+                                                        if (  birth_year > thisYear )
+                                                        {
+                                                         
+                                                             document.loginForm.prop3_1.focus();
+                                                            alert("ปีเกิดของคุณไม่ถูกต้อง / Incorrect your birthdate ");
+                                                            return false;
+                                                        }
+    
+                                                        */
+                                                        if (Trim(prop101) == "") {
+                                                            alert("กรุณาระบุตำแหน่ง / Please fill-in position.");
+                                                            document.loginForm.prop101.focus();
+                                                            return false;
+                                                        }
+                                                        if (prop101.length > 255) {
+                                                            alert("ความยาวของตำแหน่งต้องไม่เกิน 255 ตัวอักษร / Length of position is limited to 255 characters.");
+                                                            document.loginForm.prop101.focus();
+                                                            return false;
+                                                        }
+                                                        if (Trim(prop102) == "") {
+                                                            alert("กรุณาระบุส่วน งาน / Please fill-in division.");
+                                                            document.loginForm.prop102.focus();
+                                                            return false;
+                                                        }
+                                                        if (prop102.length > 255) {
+                                                            alert("ความยาวของส่วนต้องไม่เกิน 255 ตัวอักษร / Length of division is limited to 255 characters.");
+                                                            document.loginForm.prop102.focus();
+                                                            return false;
+                                                        }
+                                                        if (Trim(prop103) == "") {
+                                                            alert("กรุณาระบุบริษัท / สำนัก / Please fill-in department.");
+                                                            document.loginForm.prop103.focus();
+                                                            return false;
+                                                        }
+                                                        if (prop103.length > 255) {
+                                                            alert("ความยาวของฝ่ายต้องไม่เกิน 255 ตัวอักษร / Length of department is limited to 255 characters.");
+                                                            document.loginForm.prop103.focus();
+                                                            return false;
+                                                        }
+                                                        
+                                                        
+                                                        if (document.loginForm.prop104.value==00 ) {
+                                                            alert("กรุณาเลือกประเภทหน่วยงาน");
+                                                            document.loginForm.prop104.focus();
+                                                            return false;
+                                                        }else{
+                                                            if ( document.loginForm.prop104.value==05 && document.loginForm.prop105.value=="" ) {
+                                                                alert("กรุณาระบุหน่วยงานด้วย");
+                                                                document.loginForm.prop105.focus();
+                                                                return false;
+                                                            }
+                                                        }
+                                                        if (document.loginForm.prop203.value==00) {
+                                                            alert("กรุณาเลือกประเภทธุรกิจ/ผลิตภัณฑ์");
+                                                            document.loginForm.prop203.focus();
+                                                            return false;
+                                                        }else{
+                                                            if ( document.loginForm.prop203.value==14 && document.loginForm.prop204.value=="" ) {
+                                                                alert("กรุณาระบุประเภทธุรกิจ/ผลิตภัณฑ์ด้วย");
+                                                                document.loginForm.prop204.focus();
+                                                                return false;
+                                                            }
+                                                        }
+                                                        
+                                                        
+    
+                                                        if (house_no == "") {
+                                                            alert("กรุณาระบุบ้านเลขที่ / Please fill-in  house number.");
+                                                            document.loginForm.prop4.focus();
+                                                            return false;
+                                                        } else {
+                                                            if (Trim(house_no) == "") {
+                                                                alert("บ้านเลขที่ของคุณห้ามเป็นช่องว่าง กรุณากรอกข้อมูล.");
+                                                                return false;
+                                                            }
+                                    
+    
+                                                            if (subdistrict == "") {
+                                                                alert("กรุณาระบุตำบลหรือแขวงที่ท่านอาศัยอยู่ / Please fill-in district.");
+                                                                document.loginForm.prop9.focus();
+                                                                return false;
+                                                            } else {
+                                                                if (Trim(subdistrict) == "") {
+                                                                    alert("ตำบลของคุณห้ามเป็นช่องว่าง กรุณากรอกข้อมูล.");
+                                                                    document.loginForm.prop9.focus();
+                                                                    return false;
+                                                                }
+                                                                if (subdistrict.length > 255) {
+                                                                    alert("ความยาวของตำบลต้องไม่เกิน 255 ตัวอักษร / Length of district is limited to 255 characters.");
+                                                                    return false;
+                                                                }
+    
+                                                                if (district == "") {
+                                                                    alert("กรุณาระบุอำเภอหรือเขตที่ท่านอาศัยอยู่ / Please fill-in Amphur.");
+                                                                    document.loginForm.prop10.focus();
+                                                                    return false;
+                                                                } else {
+                                                                    if (Trim(district) == "") {
+                                                                        alert("อำเภอของคุณห้ามเป็นช่องว่าง กรุณากรอกข้อมูล.");
+                                                                        document.loginForm.prop10.focus();
+                                                                        return false;
+                                                                    }
+                                                                    if (district.length > 50) {
+                                                                        alert("ความยาวของเขตหรืออำเภอต้องไม่เกิน 50 ตัวอักษร / Length of Amphur is limited to 255 characters.");
+                                                                        return false;
+                                                                    }
+                                                                    if (zipcode == "") {
+                                                                        alert("กรุณากรอกรหัสไปรษณีย์ / Please fill-in zip code.");
+                                                                        document.loginForm.prop12.focus();
+                                                                        return false;
+                                                                    } else {
+    
+                                                                        test = verifyNumber(zipcode);
+                                                                        if (test == false) {
+                                                                            alert("Zip code must be consisted of 0-9 digit without space.");
+                                                                            document.loginForm.prop12.focus();
+                                                                            return false;
+                                                                        }
+                                                                        if (zipcode.length != 5) {
+                                                                            alert("ความยาวของรหัสไปรษณีย์ไม่ครบ 5 หลัก / Lenght of zip code must be 5.");
+                                                                            document.loginForm.prop12.focus();
+                                                                            return false;
+                                                                        } else {
+                                                                            if (Trim(phone) == "") {
+                                                                                alert("กรุณาระบุเบอร์โทรศัพท์ / Please fill-in phone number.");
+                                                                                document.loginForm.prop13.focus();
+                                                                                return false;
+                                                                            }
+                                                                            if (phone.length > 255) {
+                                                                                alert("ความยาวของเบอร์โทรศัพท์ต้องไม่เกิน 255 ตัวอักษร / Length of phone number is limited to 255 characters.");
+                                                                                return false;
+                                                                            }
+                                                                            if (province == "") {
+                                                                                alert("กรุณาเลือกจังหวัด / Please specify province.");
+                                                                                document.loginForm.prop11.focus();
+                                                                                return false;
+                                                                            }
+                                                                       
+                                                                            {	*/
+                                                                            if (email == "") {
+                                                                                alert("กรุณากรอกอีเมล์แอดเดรส (email) / Please fill-in e-Mail address.");
+                                                                                document.loginForm.email.focus();
+                                                                                return false;
+                                                                            } else {
+                                                                                test = emailCheck(email);
+                                                                                if (!test) {
+                                                                                    document.loginForm.email.focus();
+                                                                                    return false;
+                                                                                }
+                                                                                if (Trim(email) == "") {
+                                                                                    alert("อีเมล์แอดเดรส (email) ของคุณห้ามเป็นช่องว่าง กรุณากรอกข้อมูล.");
+                                                                                    document.loginForm.email.focus();
+                                                                                    return false;
+                                                                                }
+                                                                                var match=email.match(/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/gi)
+                                                                                if(!match)
+                                                                                {
+                                                                                   
+                                                                                    alert("อีเมล์แอดเดรสของคุณไม่ถูกต้อง  กรุณากรอกข้อมูลเฉพาะภาษาอังกฤษเท่านั้น / The e-mail name contains invalid characters.");
+                                                                                    document.loginForm.email.focus();
+                                                                                    return false;
+                                                                                }
+    
+                                        
+    
+    if (!CheckLikes())
+    {
+        return false;
+    }
+    
+    }
+    
+    function openWin(u,n,f){
+        user = document.loginForm.user.value;
+        test = verifyChar(user);
+        if (test == false)
+        {
+            alert("รหัสผู้ใช้เป็นตัวอักษร a-z A-Z 0-9 เท่านั้น / User Name must consisted of a-z A-Z 0-9.");
+            document.loginForm.user.focus();
+            return false;
+        }
+        if (user.length > 10 || user.length < 5)
+        {
+            alert("ความยาวของรหัสผู้ใช้ต้องอยู่ระหว่าง 5-10 ตัวอักษร / Length of User Name must be 5 - 10 characters.");
+            document.loginForm.user.focus();
+            return false;
+        }
+        var win = window.open(u+"?loginname="+user,n,f);
+        win.focus();
+        return win;
+    }
+    
+    function openWin2(u,n,f){
+        user = document.loginForm.prop200.value;
+    
+        test = verifyNumber(user);
+        if (test == false)
+        {
+            alert("เป็นตัวเลข เท่านั้น .");
+            document.loginForm.prop200.focus();
+            return false;
+        }
+        if (user.length != 13)
+        {
+            alert("เลขบัตรประจำตัวประชาชน 13 หลัก.");
+            document.loginForm.prop200.focus();
+            return false;
+        }
+        var win = window.open(u+"?pid="+user,n,f);
+        win.focus();
+        return win;
+    }
+    
+    
+    </script>
+    
+    </body></html>
